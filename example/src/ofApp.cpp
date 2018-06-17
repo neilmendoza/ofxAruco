@@ -21,7 +21,7 @@ void drawMarker(float size, const ofColor & color){
 void ofApp::setup(){
 	ofSetWindowTitle("ofxAruco - example");
 	ofSetVerticalSync(true);
-	useVideo = false;
+	useVideo = true;
 	string boardName = "boardConfiguration.yml";
 
 	if (useVideo) {

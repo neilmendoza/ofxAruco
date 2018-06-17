@@ -51,8 +51,6 @@ void ofxAruco::setupXML(string calibrationXML,float w, float h, string boardConf
 	markerSize = _markerSize;
 	detector.setThresholdMethod(aruco::MarkerDetector::ADPT_THRES);
 	
-	
-
 	camParams.readFromXMLFile(ofToDataPath(calibrationXML));
 	camParams.resize(cv::Size(w,h));
 
@@ -161,7 +159,8 @@ void ofxAruco::detectBoards(ofPixels & pixels){
 
 
 void ofxAruco::findMarkers(ofPixels & pixels){
-	cv::Mat mat = ofxCv::toCv(pixels);
+    cv::Mat mat = ofxCv::toCv(pixels);
+
 	detector.detect(mat,backMarkers,camParams,markerSize);
 
 	vector<vector<TrackedMarker>::iterator > toDelete;
@@ -227,9 +226,10 @@ void ofxAruco::findBoards(ofPixels & pixels){
 	}
 }
 
-void ofxAruco::draw(){
-	glMatrixMode( GL_PROJECTION );
-	glPushMatrix();
+void ofxAruco::draw()
+{
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
+	ofPushMatrix();
 
 	camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,10,false);
 
@@ -240,8 +240,8 @@ void ofxAruco::draw(){
 	glLoadIdentity();
 	glLoadMatrixf(ofprojMatrix.getPtr());
 
-	glMatrixMode( GL_MODELVIEW );
-	glPushMatrix();
+	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	ofPushMatrix();
 
 	for(int i=0;i<(int)markers.size();i++){
 		double matrix[16];
@@ -251,17 +251,16 @@ void ofxAruco::draw(){
 			matrixf[i] = matrix[i];
 		}
 
-		glLoadIdentity();
-		glLoadMatrixf(matrixf);
-		ofDrawAxis(markerSize);
+		ofLoadMatrix(matrixf);
+        ofDrawAxis(markerSize);
 	}
 
-	glPopMatrix();
+	ofPopMatrix();
 
-	glMatrixMode( GL_PROJECTION );
-	glPopMatrix();
+	ofSetMatrixMode(OF_MATRIX_PROJECTION);
+	ofPopMatrix();
 
-	glMatrixMode( GL_MODELVIEW );
+	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 }
 
 void ofxAruco::setMinMaxMarkerDetectionSize(float minSize, float maxSize)
@@ -304,47 +303,45 @@ vector<float> ofxAruco::getBoardProbabilities() {
 }
 
 void ofxAruco::begin(int marker){
-	glMatrixMode( GL_PROJECTION );
-	glPushMatrix();
+    ofSetMatrixMode(OF_MATRIX_PROJECTION);
+    ofPushMatrix();
 
-	camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,10,false);
+    camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,10,true);
 
-	for(int i=0;i<16;i++){
-		ofprojMatrix.getPtr()[i]=projMatrix[i];
-	}
+    for(int i=0;i<16;i++){
+        ofprojMatrix.getPtr()[i]=projMatrix[i];
+    }
 
-	glLoadIdentity();
-	glLoadMatrixf(ofprojMatrix.getPtr());
+    ofLoadMatrix(ofprojMatrix);
 
+    double matrix[16];
+    float matrixf[16];
+    markers[marker].glGetModelViewMatrix(matrix);
+    for(int i=0;i<16;i++){
+        matrixf[i] = matrix[i];
+    }
 
+    ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+    ofPushMatrix();
 
-	double matrix[16];
-	float matrixf[16];
-	markers[marker].glGetModelViewMatrix(matrix);
-	for(int i=0;i<16;i++){
-		matrixf[i] = matrix[i];
-	}
-
-	glMatrixMode( GL_MODELVIEW );
-	glPushMatrix();
-
-	glLoadIdentity();
-	glLoadMatrixf(matrixf);
+    ofLoadMatrix(matrixf);
 }
 
-void ofxAruco::end(){
-	glMatrixMode( GL_MODELVIEW );
-	glPopMatrix();
+void ofxAruco::end()
+{
+    ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+    ofPopMatrix();
 
-	glMatrixMode( GL_PROJECTION );
-	glPopMatrix();
+    ofSetMatrixMode(OF_MATRIX_PROJECTION);
+    ofPopMatrix();
 
-	glMatrixMode( GL_MODELVIEW );
+    ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 }
 
 // bgraf
 //void ofxAruco::beginBoard(){
-void ofxAruco::beginBoard(int boardnum) {
+void ofxAruco::beginBoard(int boardnum)
+{
 	glMatrixMode( GL_PROJECTION );
 	glPushMatrix();
 
@@ -481,4 +478,10 @@ void ofxAruco::threadedFunction(){
 			findBoards(backPixels);
 		}
 	}
+}
+
+void ofxAruco::stopThreadedTracking()
+{
+    condition.signal();
+    waitForThread();
 }

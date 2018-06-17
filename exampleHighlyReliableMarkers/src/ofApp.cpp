@@ -29,7 +29,7 @@ void ofApp::setup(){
 	//setup video
 	grabber.listDevices();
 	grabber.setDeviceID(1);
-	grabber.initGrabber(1920,1080);
+	grabber.initGrabber(1280, 720);
 	video = &grabber;
 	
 	
@@ -49,7 +49,8 @@ void ofApp::setup(){
 void ofApp::update(){
 	video->update();
 	if(video->isFrameNew()){
-		aruco.detectBoards(video->getPixels());
+		//aruco.detectBoards(video->getPixels());
+		aruco.detectMarkers(video->getPixels());
 	}
 }
 

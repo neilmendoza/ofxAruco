@@ -36,9 +36,6 @@ public:
     
 	void draw();
 
-	
-
-    
 	vector<aruco::Marker> & getMarkers();
     //    bgraf
     //	aruco::Board & getBoard();
@@ -75,11 +72,13 @@ public:
 	void setMinMaxMarkerDetectionSize(float minSize, float maxSize); //the detection size of a marker in fraction of camera width
 	void setMarkerSize(float markerSizeInMeter); 
 	
-
+    void setFlipY(bool flipY) { this->flipY = flipY; }
     
     // bgraf
     //	aruco::BoardConfiguration & getBoardConfig();
     vector<aruco::BoardConfiguration> & getBoardConfigs();
+
+    void stopThreadedTracking();
     
 private:
 	void threadedFunction();
@@ -125,6 +124,8 @@ private:
 	TrackedMarker * findTrackedMarker(int id);
 	bool threaded;
 	bool foundMarkers,foundBoard;
+
+	bool flipY {true};
 };
 
 #endif /* OFXARUCO_H_ */
