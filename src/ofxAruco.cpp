@@ -306,7 +306,7 @@ void ofxAruco::begin(int marker){
     ofSetMatrixMode(OF_MATRIX_PROJECTION);
     ofPushMatrix();
 
-    camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,10,true);
+    camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,10,false);
 
     for(int i=0;i<16;i++){
         ofprojMatrix.getPtr()[i]=projMatrix[i];
@@ -370,8 +370,8 @@ void ofxAruco::beginBoard(int boardnum)
 	glLoadMatrixf(matrixf);
 }
 
-ofMatrix4x4 ofxAruco::getProjectionMatrix(){
-	camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,100,false);
+ofMatrix4x4 ofxAruco::getProjectionMatrix(bool invert){
+	camParams.glGetProjectionMatrix(size,size,projMatrix,0.05,100,invert);
 	for(int i=0;i<16;i++){
 		ofprojMatrix.getPtr()[i]=projMatrix[i];
 	}

@@ -52,7 +52,7 @@ public:
     void beginBoard(int boardnum);
 	void end();
     
-	ofMatrix4x4 getProjectionMatrix();
+	ofMatrix4x4 getProjectionMatrix(bool invert = false);
 	ofMatrix4x4 getModelViewMatrix(int marker);
 	ofMatrix4x4 getModelViewMatrixBoard(int board);
     
